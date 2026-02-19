@@ -1,6 +1,6 @@
 # -------------------------------
 # ATM Demand Forecasting Script
-# For FA‑2 (Data Mining)
+# FA‑2 (Data Mining)
 # -------------------------------
 
 # Import libraries
@@ -50,13 +50,12 @@ df['Day_of_Week_encoded'] = df['Day_of_Week'].map({
     'Thursday': 4,'Friday': 5,'Saturday': 6,'Sunday': 7
 })
 
-# Example Time_of_Day mapping (ensure your CSV has this column)
+# Example Time_of_Day mapping
 df['Time_of_Day_encoded'] = df['Time_of_Day'].map({
-    'Morning': 1,'Afternoon':2,
-    'Evening':3,'Night':4
+    'Morning': 1,'Afternoon':2,'Evening':3,'Night':4
 })
 
-# Encode other categorical flags
+# Encode flags
 df['Holiday_Flag'] = df['Holiday_Flag'].astype(int)
 df['Special_Event_Flag'] = df['Special_Event_Flag'].astype(int)
 
@@ -71,7 +70,7 @@ print(df.describe())
 # 3️⃣ Exploratory Data Analysis (EDA)
 # -------------------------------
 
-# (A) Distribution Analysis
+# Distribution Analysis
 plt.figure(figsize=(10, 5))
 sns.histplot(df['Total_Withdrawals'], kde=True, color='blue')
 plt.title("Distribution of Total Withdrawals")
@@ -87,10 +86,9 @@ sns.boxplot(x=df['Total_Withdrawals'])
 plt.title("Boxplot: Withdrawals Outliers")
 plt.show()
 
-# Insight
 print("Observation: Histogram shows central tendency and spread of withdrawals.")
 
-# (B) Time‑Based Trends
+# Time-Based Trends
 plt.figure(figsize=(12, 6))
 sns.lineplot(data=df, x='Date', y='Total_Withdrawals')
 plt.title("Withdrawals Over Time")
@@ -102,7 +100,12 @@ plt.title("Avg Withdrawals By Day of Week")
 plt.xticks(rotation=45)
 plt.show()
 
-# (C) Holiday & Event Impact
+plt.figure(figsize=(12, 6))
+sns.barplot(x='Time_of_Day', y='Total_Withdrawals', data=df)
+plt.title("Avg Withdrawals By Time of Day")
+plt.show()
+
+# Holiday & Event Impact
 plt.figure(figsize=(8,5))
 sns.barplot(x='Holiday_Flag', y='Total_Withdrawals', data=df)
 plt.title("Withdrawals on Holiday vs Normal")
@@ -113,7 +116,7 @@ sns.barplot(x='Special_Event_Flag', y='Total_Withdrawals', data=df)
 plt.title("Withdrawals on Special Event Days")
 plt.show()
 
-# (D) External Factors
+# External Factors
 plt.figure(figsize=(8,5))
 sns.boxplot(x='Weather_Condition', y='Total_Withdrawals', data=df)
 plt.title("Withdrawals vs Weather Condition")
@@ -124,7 +127,7 @@ sns.boxplot(x='Nearby_Competitor_ATMs', y='Total_Withdrawals', data=df)
 plt.title("Effect of Nearby Competitor ATMs on Withdrawals")
 plt.show()
 
-# (E) Correlation and Relationships
+# Relationship Analysis
 plt.figure(figsize=(10, 8))
 sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
 plt.title("Correlation Heatmap")
@@ -168,24 +171,24 @@ plt.show()
 
 # Assign cluster meaning
 df['Cluster_Type'] = df['Cluster_Label'].map({
-    0: 'Steady‑Demand', 1:'High‑Demand', 2:'Low‑Demand'
+    0: 'Steady-Demand', 1:'High-Demand', 2:'Low-Demand'
 })
 
 # -------------------------------
 # 5️⃣ Anomaly Detection
 # -------------------------------
 
-# Z‑score method
+# Z-score method
 df['zscore_withdrawals'] = np.abs(stats.zscore(df['Total_Withdrawals']))
 anomalies_z = df[df['zscore_withdrawals'] > 3]
 
 # IQR method
 Q1 = df['Total_Withdrawals'].quantile(0.25)
 Q3 = df['Total_Withdrawals'].quantile(0.75)
-IQR = Q3 ‑ Q1
-anomalies_iqr = df[(df['Total_Withdrawals'] < Q1‑1.5*IQR) | (df['Total_Withdrawals'] > Q3+1.5*IQR)]
+IQR = Q3 - Q1
+anomalies_iqr = df[(df['Total_Withdrawals'] < Q1 - 1.5*IQR) | (df['Total_Withdrawals'] > Q3 + 1.5*IQR)]
 
-print("Z‑score Anomalies Count:", anomalies_z.shape[0])
+print("Z-score Anomalies Count:", anomalies_z.shape[0])
 print("IQR Anomalies Count:", anomalies_iqr.shape[0])
 
 # Visualize anomalies
@@ -197,16 +200,17 @@ plt.legend()
 plt.show()
 
 # -------------------------------
-# 6️⃣ Interactive Planner (Filter Example)
+# 6️⃣ Interactive Planner / Filter Examples
 # -------------------------------
 
+# Example: Weekends
 print("\nFilter Example: ATMs on Weekends")
 weekend_data = df[df['Day_of_Week'].isin(['Saturday','Sunday'])]
 print(weekend_data[['Date','Total_Withdrawals','Cluster_Type']].head())
 
+# Example: Urban ATMs only
 print("\nFilter Example: Urban ATMs only")
 urban_data = df[df['Location_Type']==1]
 print(urban_data[['Date','Total_Withdrawals','Cluster_Type']].head())
 
 print("\nScript execution completed!")
-
