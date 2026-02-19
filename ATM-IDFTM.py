@@ -1,6 +1,7 @@
 # -------------------------------
 # ATM Demand Forecasting Script
 # FA‑2 (Data Mining)
+# Streamlit / Cloud Safe Version
 # -------------------------------
 
 # Import libraries
@@ -16,8 +17,8 @@ from sklearn.metrics import silhouette_score
 # For anomaly detection
 from scipy import stats
 
-# Improve plot styles
-plt.style.use('seaborn')
+# Safe plot style (works in cloud / Streamlit)
+plt.style.use('ggplot')  # safer alternative to 'seaborn'
 sns.set_context('talk')
 
 # -------------------------------
@@ -50,7 +51,7 @@ df['Day_of_Week_encoded'] = df['Day_of_Week'].map({
     'Thursday': 4,'Friday': 5,'Saturday': 6,'Sunday': 7
 })
 
-# Example Time_of_Day mapping
+# Encode Time_of_Day (ensure your CSV has this column)
 df['Time_of_Day_encoded'] = df['Time_of_Day'].map({
     'Morning': 1,'Afternoon':2,'Evening':3,'Night':4
 })
@@ -155,7 +156,7 @@ for k in range(2, 7):
 
 plt.figure(figsize=(8,4))
 plt.plot(range(2,7), inertia, marker='o')
-plt.title("Elbow Method for K‑Means")
+plt.title("Elbow Method for K-Means")
 plt.show()
 
 # Fit KMeans
