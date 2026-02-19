@@ -32,7 +32,7 @@ print("\nFirst 5 Rows:")
 print(df.head())
 
 # -------------------------------
-# 2️⃣ Data Preprocessing
+# 2️⃣ Data Preprocessing (Safe)
 # -------------------------------
 
 # Convert Date column to datetime
@@ -60,16 +60,19 @@ for flag in ['Holiday_Flag','Special_Event_Flag']:
     if flag in df.columns:
         df[flag] = df[flag].astype(int)
 
-# Safe missing value handling
+# -------------------------------
+# Safe Missing Value Handling
+# -------------------------------
+# Forward-fill only numeric and object columns
 for col in df.columns:
     if df[col].dtype in ['float64','int64','object']:
-        df[col].fillna(method='ffill', inplace=True)
+        try:
+            df[col].fillna(method='ffill', inplace=True)
+        except Exception as e:
+            print(f"Skipping column {col} due to error: {e}")
 
-# Drop any remaining NaNs just in case
+# Drop remaining NaNs if any
 df.dropna(inplace=True)
-
-print("\nAfter Preprocessing:")
-print(df.describe())
 
 # -------------------------------
 # 3️⃣ Exploratory Data Analysis (EDA)
@@ -228,4 +231,5 @@ print("\nUrban ATMs Example:")
 print(urban_data[['Date','Total_Withdrawals','Cluster_Type']].head())
 
 print("\nScript execution completed successfully!")
+
 
