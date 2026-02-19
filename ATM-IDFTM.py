@@ -182,7 +182,7 @@ anomalies_z = df[df['zscore_withdrawals'] > 3]
 # IQR method
 Q1 = df['Total_Withdrawals'].quantile(0.25)
 Q3 = df['Total_Withdrawals'].quantile(0.75)
-IQR = Q3‑Q1
+IQR = Q3 ‑ Q1
 anomalies_iqr = df[(df['Total_Withdrawals'] < Q1‑1.5*IQR) | (df['Total_Withdrawals'] > Q3+1.5*IQR)]
 
 print("Z‑score Anomalies Count:", anomalies_z.shape[0])
@@ -209,3 +209,4 @@ urban_data = df[df['Location_Type']==1]
 print(urban_data[['Date','Total_Withdrawals','Cluster_Type']].head())
 
 print("\nScript execution completed!")
+
