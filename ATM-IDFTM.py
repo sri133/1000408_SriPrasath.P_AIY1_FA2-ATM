@@ -75,6 +75,20 @@ for col in df.columns:
 df.dropna(inplace=True)
 
 # -------------------------------
+# Safe Missing Value Handling
+# -------------------------------
+# Forward-fill only numeric and object columns
+for col in df.columns:
+    if df[col].dtype in ['float64','int64','object']:
+        try:
+            df[col].fillna(method='ffill', inplace=True)
+        except Exception as e:
+            print(f"Skipping column {col} due to error: {e}")
+
+# Drop remaining NaNs if any
+df.dropna(inplace=True)
+
+# -------------------------------
 # 3️⃣ Exploratory Data Analysis (EDA)
 # -------------------------------
 
@@ -231,5 +245,6 @@ print("\nUrban ATMs Example:")
 print(urban_data[['Date','Total_Withdrawals','Cluster_Type']].head())
 
 print("\nScript execution completed successfully!")
+
 
 
